@@ -13,6 +13,14 @@ const ToolSets = [
     {
         name: 'Set 3',
         items: ['(1)', '(2)', '(3)', '(4)', '(5)', '(a)', '(b)', '(c)']
+    },
+    {
+        name: 'Set 4',
+        items: ['➀', '➁', '➂', '➃', '➄', 'Ⓐ', 'Ⓑ', 'Ⓒ']
+    },
+    {
+        name: 'Set 5',
+        items: ['1⃣','2⃣','3⃣','4⃣','5⃣','🄰', '🄱', '🄲']
     }
 ];
 
@@ -25,9 +33,22 @@ const Toolbar = ({
     onLoadProject,
     activeColor,
     onColorChange,
+    activeFont,
+    onFontChange,
     toolSizes,
     onSizeChange
 }) => {
+    const fonts = [
+        'Arial',
+        'Times New Roman',
+        'Courier New',
+        'Georgia',
+        'Verdana',
+        'Microsoft JhengHei',
+        'PingFang TC',
+        'Noto Sans TC'
+    ];
+
     return (
         <div style={{
             height: 'var(--toolbar-height)',
@@ -97,7 +118,7 @@ const Toolbar = ({
 
             <div style={{ width: 1, height: '24px', background: 'var(--border-color)', flexShrink: 0 }} />
 
-            {/* Color Control */}
+            {/* Color and Font Control */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input
                     type="color"
@@ -113,6 +134,25 @@ const Toolbar = ({
                         cursor: 'pointer'
                     }}
                 />
+                <select
+                    value={activeFont}
+                    onChange={(e) => onFontChange(e.target.value)}
+                    title="選擇字型"
+                    style={{
+                        padding: '4px',
+                        fontSize: '12px',
+                        background: 'var(--bg-tertiary)',
+                        color: 'var(--text-primary)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '4px',
+                        outline: 'none',
+                        cursor: 'pointer'
+                    }}
+                >
+                    {fonts.map(font => (
+                        <option key={font} value={font}>{font}</option>
+                    ))}
+                </select>
             </div>
 
             <div style={{ width: 1, height: '24px', background: 'var(--border-color)', flexShrink: 0 }} />
@@ -136,7 +176,10 @@ const Toolbar = ({
 
             {/* Marking Tools */}
             {ToolSets.map((set, setIndex) => {
-                const currentSize = toolSizes ? toolSizes[setIndex] : [39, 20, 17][setIndex];
+                const defaultSizes = [39, 20, 17, 17, 17];
+                const currentSize = (toolSizes && toolSizes[setIndex] !== undefined) 
+                    ? toolSizes[setIndex] 
+                    : (defaultSizes[setIndex] || 24);
 
                 return (
                     <div key={setIndex} style={{ display: 'flex', gap: '4px', alignItems: 'center', borderRight: '1px solid var(--border-color)', paddingRight: '8px' }}>

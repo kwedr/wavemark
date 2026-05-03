@@ -16,9 +16,25 @@ function App() {
   const containerRef = useRef(null);
 
   const [activeColor, setActiveColor] = useState('#ef4444'); // Default red
+  const [activeFont, setActiveFont] = useState('Arial'); // Default font
 
-  // Replace single activeSize with toolSizes array [set1, set2, set3]
-  const [toolSizes, setToolSizes] = useState([39, 20, 17]);
+  const handleFontChange = (newFont) => {
+    setActiveFont(newFont);
+    // If an item is selected, update its font family immediately
+    if (selectedItem) {
+      setLayers(currentLayers => currentLayers.map(l => {
+        if (l.id === selectedItem.layerId) {
+          const newItems = [...l.items];
+          newItems[selectedItem.index] = { ...newItems[selectedItem.index], fontFamily: newFont };
+          return { ...l, items: newItems };
+        }
+        return l;
+      }));
+    }
+  };
+
+  // Replace single activeSize with toolSizes array [set1, set2, set3, set4, set5]
+  const [toolSizes, setToolSizes] = useState([39, 20, 17, 17, 17]);
 
   const [selectedItem, setSelectedItem] = useState(null); // { layerId, index }
 
@@ -117,6 +133,7 @@ function App() {
         y: pos.y - offset, // Center Y
         fill: activeColor,
         fontSize: currentSize,
+        fontFamily: activeFont,
         toolSetIndex: setIndex
       };
 
@@ -164,6 +181,7 @@ function App() {
       activeLayerId: activeLayerId,
       activeTool: activeTool,
       activeColor: activeColor,
+      activeFont: activeFont,
       toolSizes: toolSizes, // Save the new array instead of single size
       activeSize: toolSizes[0], // Keep for backwards compatibility if needed
     };
@@ -192,6 +210,9 @@ function App() {
           setActiveLayerId(projectData.activeLayerId || (projectData.layers && projectData.layers[0] ? projectData.layers[0].id : ''));
           setActiveTool(projectData.activeTool || 'select');
           setActiveColor(projectData.activeColor || '#ef4444');
+          if (projectData.activeFont) {
+            setActiveFont(projectData.activeFont);
+          }
           if (projectData.toolSizes) {
             setToolSizes(projectData.toolSizes);
           } else if (projectData.activeSize) {
@@ -299,6 +320,8 @@ function App() {
         onLoadProject={() => document.getElementById('projectFileInput').click()}
         activeColor={activeColor}
         onColorChange={setActiveColor}
+        activeFont={activeFont}
+        onFontChange={handleFontChange}
         toolSizes={toolSizes}
         onSizeChange={handleSizeChange}
       />
